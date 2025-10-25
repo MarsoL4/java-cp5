@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Assistente AI - CP5</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        textarea { width: 100%; height: 300px; font-family: monospace; }
+        select, button { padding: 8px; margin-top: 8px; }
+        .note { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<h1>Assistente AI - CP5</h1>
+<form action="/ask" method="post">
+    <label for="theme">Escolha o tema:</label><br/>
+    <select id="theme" name="theme">
+        <option value="1">1 - Gerar testes unitários (cole a classe Java)</option>
+        <option value="2">2 - Tradutor Português -> Espanhol (ético)</option>
+        <option value="3">3 - Identificar melhorias em código Java (cole a classe)</option>
+    </select>
+    <p class="note">Cole o código ou texto no campo abaixo. Se estiver sem chave OpenAI, você verá o prompt que seria enviado (útil para desenvolvimento).</p>
+    <label for="inputText">Texto / Código:</label><br/>
+    <textarea id="inputText" name="inputText" placeholder="Cole aqui..."></textarea><br/>
+    <button type="submit">Enviar</button>
+</form>
+</body>
+</html>
