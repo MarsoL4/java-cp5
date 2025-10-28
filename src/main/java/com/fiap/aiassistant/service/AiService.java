@@ -18,7 +18,7 @@ public class AiService {
     public String handle(String theme, String input) {
         String prompt = buildPrompt(theme, input);
         if (!StringUtils.hasText(apiKey)) {
-            // Sem chave: retornamos o prompt para desenvolvimento / testes
+            // Sem chave: retorna o prompt para desenvolvimento / testes
             return "OpenAI API key não configurada. Prompt que seria enviado ao modelo:\n\n" + prompt;
         }
         try {
