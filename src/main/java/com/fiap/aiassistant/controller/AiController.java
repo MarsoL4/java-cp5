@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class AiController {
 
     private final AiService aiService;
+    private static final int MAX_INPUT_LENGTH = 30000; // ajuste conforme necessário
 
     public AiController(AiService aiService) {
         this.aiService = aiService;
@@ -25,10 +26,24 @@ public class AiController {
             @RequestParam("inputText") String inputText,
             Model model) {
 
-        String result = aiService.handle(theme, inputText);
+        String trimmed = inputText == null ? "" : inputText.trim();
+        if (trimmed.isEmpty()) {
+            model.addAttribute("theme", theme);
+            model.addAttribute("inputText", inputText);
+            model.addAttribute("result", "Por favor, forneça um texto ou código de entrada.");
+            return "result";
+        }
+        if (trimmed.length() > MAX_INPUT_LENGTH) {
+            model.addAttribute("theme", theme);
+            model.addAttribute("inputText", inputText.substring(0, Math.min(2000, inputText.length())) + "\n... (texto muito longo)");
+            model.addAttribute("result", "Entrada excede o tamanho máximo permitido (" + MAX_INPUT_LENGTH + " caracteres). Por favor, reduza o texto.");
+            return "result";
+        }
+
+        String result = aiService.handle(theme, trimmed);
 
         model.addAttribute("theme", theme);
-        model.addAttribute("inputText", inputText);
+        model.addAttribute("inputText", trimmed);
         model.addAttribute("result", result);
         return "result";
     }
