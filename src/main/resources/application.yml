@@ -6,4 +6,4 @@ spring:
             chat:
                 options:
                     model: gpt-4o
-            api-key: ${OPENAI_API_KEY:} # Use a variável de ambiente OPENAI_API_KEY ou deixe vazia para testes locais
+            api-key: 
