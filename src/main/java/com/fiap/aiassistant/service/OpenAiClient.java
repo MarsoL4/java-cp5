@@ -14,9 +14,13 @@ public class OpenAiClient {
 
     private final WebClient webClient;
     private final String apiKey;
+    private final String model;
 
-    public OpenAiClient(@Value("${openai.api.key:}") String apiKey) {
+    public OpenAiClient(
+            @Value("${spring.ai.openai.api-key:}") String apiKey,
+            @Value("${spring.ai.openai.chat.options.model:gpt-3.5-turbo}") String model) {
         this.apiKey = apiKey != null ? apiKey.trim() : "";
+        this.model = model != null ? model.trim() : "gpt-3.5-turbo";
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.openai.com/v1")
                 .defaultHeaders(h -> {
@@ -38,7 +42,7 @@ public class OpenAiClient {
         }
 
         Map<String, Object> body = Map.of(
-                "model", "gpt-3.5-turbo",
+                "model", model,
                 "messages", List.of(Map.of("role", "user", "content", prompt)),
                 "temperature", 0.2
         );
