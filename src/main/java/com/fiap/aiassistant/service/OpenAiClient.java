@@ -5,7 +5,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.ClientResponse;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -47,13 +50,15 @@ public class OpenAiClient {
                 "temperature", 0.2
         );
 
-        // Mantemos o tipo Map<String,Object> para a resposta
         Map<String, Object> response = webClient.post()
                 .uri("/chat/completions")
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                          clientResponse -> extractErrorMessage(clientResponse))
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .timeout(Duration.ofSeconds(30)) // Timeout configurável
                 .block();
 
         if (response == null) {
@@ -77,5 +82,11 @@ public class OpenAiClient {
             }
         }
         throw new RuntimeException("Formato inesperado de resposta da OpenAI: " + response);
+    }
+
+    private Mono<Throwable> extractErrorMessage(ClientResponse clientResponse) {
+        return clientResponse.bodyToMono(String.class)
+                .defaultIfEmpty("Erro desconhecido ao chamar OpenAI")
+                .map(body -> new RuntimeException("OpenAI API retornou status " + clientResponse.statusCode() + ": " + body));
     }
 }
