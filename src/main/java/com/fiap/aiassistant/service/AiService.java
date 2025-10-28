@@ -10,7 +10,7 @@ public class AiService {
     private final OpenAiClient openAiClient;
     private final String apiKey;
 
-    public AiService(OpenAiClient openAiClient, @Value("${openai.api.key:}") String apiKey) {
+    public AiService(OpenAiClient openAiClient, @Value("${spring.ai.openai.api-key:}") String apiKey) {
         this.openAiClient = openAiClient;
         this.apiKey = apiKey != null ? apiKey.trim() : "";
     }
